@@ -1,0 +1,72 @@
+<!-- Master Character List -->
+<div class="col-sm-3" id="characterList" ng-controller="CharacterlistCtrl">
+	<input type="text" ng-model="charName" />
+	<ul id="characterList" class="list-unstyled">
+		<li ng-repeat="char in characters | filter: charName">
+		<!-- <li ng-repeat="char in characters"> -->
+			<div class="btn-group" role="group">
+				<button class="btn btn-default" ng-click="edit(char)">{{char.name}}</button>
+				<button class="btn btn-default" ng-click="goLive(char)"><span class="fa fa-phone"></span></button>
+			</div>
+		</li>
+	</ul>
+</div>
+
+<div class="col-sm-3" id="callerList" ng-controller="CallersCtrl">
+	<ul id="callerList" class="list-unstyled">
+		<li ng-repeat="char in callers">
+		<!-- <li ng-repeat="char in characters"> -->
+			<div class="btn-group" role="group">
+				<button class="btn btn-default" ng-click="edit(char)">{{char.name}}</button>
+				<button class="btn btn-default" ng-click="hangUp(char)"><span class="fa fa-times"></span></button>
+			</div>
+		</li>
+	</ul>
+</div>
+
+<div class="col-sm-6" id="editCharacter" ng-controller="CharacterCtrl">
+	<!-- <form id="editCharacter" ng-if="editing.length > 0"> -->
+		<input type="text" id="name" class="form-control" ng-model="editing.name" />
+		<input type="text" id="characteristics" class="form-control" ng-model="editing.characteristics" />
+		<input type="text" id="voice" class="form-control" ng-model="editing.voice" />
+		<select name="actor" id="actor" ng-model="editing.actor" class="form-control">
+			<option value="Brad">Brad</option>
+			<option value="Derek">Derek</option>
+			<option value="Jared">Jared</option>
+		</select>
+
+		<ul id="relationships" class="list-unstyled">
+			<div class="row">
+				
+				<select class="form-control" name="new-relationship" id="new-relationship" ng-model="relationshipType">
+					<option>Friends</option>
+					<option>Enemies</option>
+					<option>Lovers</option>
+					<option>Ex-Lovers</option>
+					<option>Family</option>
+					<option>Works With/For</option>
+				</select>
+				
+				<input type="text" class="form-control" ng-model="charFilter" placeholder="Filter Characters">
+             	<select multiple ng-model="relationshipCharacters" class="form-control">
+             		<option ng-repeat="char in characters | filter: charFilter">{{char.name}}</option>
+             	</select>
+
+				<button class="btn btn-primary" ng-click="addTo('relationships', {type: relationshipType, character: relationshipCharacters})"><span class="fa fa-plus"></span></button>
+			</div>
+			<li ng-repeat="item in editing.relationships">
+				<span ng-bind-html="toHTML(item.icon)"></span>
+				{{item.character}}
+				<button class="btn btn-link text-danger" ng-click="removeFromList('relationships', item)"><span class="fa fa-times"></span></button>
+			</li>			
+		</ul>
+
+		<ul id="history" class="">
+			<li ng-repeat="item in editing.history">
+				{{item}}
+			</li>
+		</ul>
+
+
+	<!-- </form> -->
+</div>
