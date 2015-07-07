@@ -11,13 +11,16 @@ angular.module('potgApp')
   .controller('CharacterCtrl', function ($scope, characters) {
 
     $scope.characters = characters.db;
-    $scope.icon = characters.createIcon;
+    $scope.episodes = characters.eps;
+    $scope.icon = function(a) {
+      return characters.createIcon(a);
+    }
     $scope.$watch(function() {return characters.editing}, function(data){
-      console.log('watch');
-      // angular.forEach(data.relationship, function(r){
-        // console.log(r);
-        // if (r.icon == '') r.icon = $scope.createIcon(r.relationshipStatus);
-      // });
+      // console.log('watch');
+      angular.forEach(data.relationship, function(r){
+        console.log(r);
+        if (r.icon == '') r.icon = $scope.createIcon(r.relationshipStatus);
+      });
       $scope.editing = data;
     })
 
@@ -25,15 +28,33 @@ angular.module('potgApp')
       $scope.editing.name = data.name;
     }
 
-    $scope.addTo = function(category, data) {
-      console.log(data);
-      if (data.character == '') return false;
-      if(category == 'relationship') data.icon = $scope.icon(data.relationshipStatus);
-      if(data.character.length > 0) {
-        angular.forEach(data.character, function(character) {
-          $scope.editing[category].push({relationshipStatus: data.relationshipStatus, icon: data.icon, character: character});
+    $scope.multiSelectHanlder = function(target, selection) {
+      angular.forEach(data.character, function(character) {
+        $scope.editing[category].push({relationshipStatus: data.relationshipStatus, icon: data.icon, character: character});
+      });
+    }
+
+    $scope.pushToCategory = function(category, data) {
+      if (Array.isArray(data)) {
+        angular.forEach(data, function(item){
+          $scope.editing[category].push(item);
         });
-      } else $scope.editing[category].push(data);
+      } else
+        $scope.editing[category].push(data);
+      console.log($scope.editing[category]);
+    }
+
+    $scope.addTo = function(category, data) {
+      if (category == 'relationships') {
+        if (data.character == '') return false;
+        data.icon = $scope.icon(data.relationshipStatus);
+        angular.forEach(data.character, function(character) {
+            $scope.pushToCategory(category, {relationshipStatus: data.relationshipStatus, icon: data.icon, character: character})
+        });
+      } else {
+        $scope.pushToCategory(category, data);
+      }
+      $scope[data] = '';
       console.log($scope.editing[category]);
     }
 

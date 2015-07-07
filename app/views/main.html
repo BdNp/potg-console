@@ -26,6 +26,7 @@
 
 <div class="col-sm-6" id="editCharacter" ng-controller="CharacterCtrl">
 	<!-- <form id="editCharacter" ng-if="editing.length > 0"> -->
+		<h2>Character Info</h2>
 		<input type="text" id="name" class="form-control" ng-model="editing.name" />
 		<input type="text" id="characteristics" class="form-control" ng-model="editing.characteristics" />
 		<input type="text" id="voice" class="form-control" ng-model="editing.voice" />
@@ -35,11 +36,14 @@
 			<option value="Jared">Jared</option>
 		</select>
 
+		<!-- Relationship List -->
+		<h3>Relationships</h3>
 		<ul id="relationships" class="list-unstyled">
 			<div class="row">
-				
-				<select class="form-control" name="new-relationship" id="new-relationship" ng-model="relationshipType">
-					<option>Friends</option>
+				{{relationshipStatus}}
+				<select class="form-control" name="new-relationship" id="new-relationship" ng-model="relationshipStatus">
+             		<option value="">Select a dynamic</option>
+					<option value="Friends">Friends</option>
 					<option>Enemies</option>
 					<option>Lovers</option>
 					<option>Ex-Lovers</option>
@@ -52,7 +56,7 @@
              		<option ng-repeat="char in characters | filter: charFilter">{{char.name}}</option>
              	</select>
 
-				<button class="btn btn-primary" ng-click="addTo('relationships', {type: relationshipType, character: relationshipCharacters})"><span class="fa fa-plus"></span></button>
+				<button class="btn btn-primary" ng-click="addTo('relationships', {relationshipStatus: relationshipStatus, character: relationshipCharacters})"  ng-class="{'disabled': !relationshipCharacters}"><span class="fa fa-plus"></span></button>
 			</div>
 			<li ng-repeat="item in editing.relationships">
 				<span ng-bind-html="toHTML(item.icon)"></span>
@@ -61,9 +65,32 @@
 			</li>			
 		</ul>
 
+		<!-- Story Points -->
+		<h3>Story Points</h3>
 		<ul id="history" class="">
+			<textarea name="" id="" cols="30" rows="10" class="form-control" ng-model="storyPoint"></textarea>
+			<button class="btn btn-primary" ng-click="addTo('history', storyPoint)"
+					ng-class="{'disabled': !storyPoint}">
+				<span class="fa fa-plus"></span></button>
 			<li ng-repeat="item in editing.history">
 				{{item}}
+				<button class="btn btn-link text-danger" ng-click="removeFromList('history', item)"><span class="fa fa-times"></span></button>
+			</li>
+		</ul>
+
+		<!-- Appears In -->
+		<h3>Appears In</h3>
+		<ul id="episodes">
+			<input type="text" class="form-control" ng-model="epFilter" placeholder="Filter Characters">
+         	<select multiple ng-model="selectedEpisodes" class="form-control">
+         		<option ng-repeat="ep in episodes | filter: epFilter">{{ep}}</option>
+         	</select>
+
+			<button class="btn btn-primary" ng-click="addTo('episodes', selectedEpisodes)"  ng-class="{'disabled': !selectedEpisodes}"><span class="fa fa-plus"></span></button>
+
+			<li ng-repeat="item in editing.episodes">
+				{{item}}
+				<button class="btn btn-link text-danger" ng-click="removeFromList('history', item)"><span class="fa fa-times"></span></button>
 			</li>
 		</ul>
 
