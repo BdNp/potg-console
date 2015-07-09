@@ -11,7 +11,9 @@ angular.module('potgApp')
   .controller('CharacterCtrl', function ($scope, characters) {
 
     $scope.characters = characters.db;
+    $scope.character = characters;
     $scope.episodes = characters.eps;
+    $scope.newChar = false;
     $scope.icon = function(a) {
       return characters.createIcon(a);
     }
@@ -23,10 +25,6 @@ angular.module('potgApp')
       });
       $scope.editing = data;
     })
-
-    $scope.save = function(data) {
-      $scope.editing.name = data.name;
-    }
 
     $scope.multiSelectHanlder = function(target, selection) {
       angular.forEach(data.character, function(character) {
@@ -66,6 +64,44 @@ angular.module('potgApp')
       return str;
     }
 
-    // $scope.
+    $scope.newChar = function() {
+      $scope.editing = {};
+      $scope.newChar = true;
+    }
+
+    $scope.save = function(character) {
+      // Convert character details to url params
+      var params;
+      
+      params += '&title=' + character.name;
+      params += '&custom[actor]=' + character.actor;
+      params += '&custom[characteristics]=' + serialize(character.characteristics);
+      params += '&custom[voice]=' + serialize(character.voice);
+      params += '&custom[relationships]=' + serialize(character.relationships);
+      params += '&custom[history]=' + serialize(character.history);
+      params += '&custom[episodes]=' + serialize(character.episodes);
+      console.log(params);
+
+      // New or Update
+      if($scope.newChar === true) {
+        $scope.character.newChar = true;
+
+        // debug, not needed when posting to WP
+        $scope.editing.charID = $scope.characters.length; 
+        $scope.characters.push($scope.editing);
+
+        // API new
+        // characters.addCharacter(params);
+
+        // No longer a new character, reset new flag
+        $scope.newChar = false;
+      } else {
+        params += '&id=' + character.id;
+        console.log('save');
+
+        // API new
+        // characters.updateCharacter(params);
+      }
+    }
 
   });

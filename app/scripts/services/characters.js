@@ -8,45 +8,34 @@
  * Factory in the potgApp.
  */
 angular.module('potgApp')
-  .factory('characters', ['$http', function ($http) {
-      // Service logic
-      // ...
-  
-      var urlBase = 'http://planetofthegrapes.com/api/';
-      //get_category_posts/?id=21'
+  .factory('characters', ['$http', function ($http, $q) {
+
+      var urlBase = 'http://planetofthegrapes.com/';
   
       var api = {
         login: function(user, pass) {
 
         },
         getCharacters: function() {
-          return $http.get(urlBase + 'get_category_posts/?id=21')
-                      .success(function(result){
-                        console.log(result);
-                        var output = [];
-                        angular.forEach(result.posts, function(character){
-                          output.push({name: character.title, id: character.id});
-                        })
-                        return output;
-                      })
-                      .error(function(){
-                        $scope.status = 'Unable to load customer data: ' + error.message;
-                      });
+          return $http.get(urlBase + 'api/get_category_posts/?id=21')
         },
         getCharacter: function(id) {
-          return $http.get(urlBase + 'get_post/?id=' + id);
+          return $http.get(urlBase + 'api/get_post/?id=' + id);
         },
-        updateCharacter: function(id, data) {
-
+        updateCharacter: function(params) {
+          return $http.get(urlBase + '?json=posts.update_post&nonce=' + this.getNonce('update_post') + params + '&status=publish' );
         },
-        addCharacter: function(data) {
-
+        addCharacter: function(params) {
+          return $http.get(urlBase + '?json=posts.create_post&nonce=' + this.getNonce('create_post') + params + '&status=publish' );
         },
+        getNonce: function(method) {
+          return $http.get(urlBase + '?json=core.get_nonce&controller=posts&method=' + method + '&callback=?');
+        }
       };
   
       var dummyCharacters = [
         {
-          id: '1199',
+          id: '0',
           name: 'Birdman',
           actor: 'Jared',
           characteristics: [],
@@ -57,7 +46,7 @@ angular.module('potgApp')
           live: false
         },
         {
-          id: '1199',
+          id: '1',
           name: 'Bill Clinton',
           actor: 'Derek',
           characteristics: [],
@@ -68,7 +57,7 @@ angular.module('potgApp')
           live: false
         },
         {
-          id: '1199',
+          id: '2',
           name: 'Gonzo',
           actor: 'Brad',
           characteristics: ['promiscuous', 'agitated'],
@@ -85,16 +74,17 @@ angular.module('potgApp')
   
       return {
         api: api,
-        // db: dummyCharacters,
-        db: api.getCharacters(),
+        db: dummyCharacters,
+        IDs: [1,2,3],
         eps: dummyEpisodes,
         onAir: [],
         editing: dummyCharacters[2],
+        newChar: false,
   
         edit: function(character) {
           self = this;
           
-          // Get Character from the APO
+          // Get Character from the API
           this.api.getCharacter(character.id)
               .success(function(char){
                 console.log(char);
@@ -105,7 +95,7 @@ angular.module('potgApp')
 
           this.editing = character;
           angular.forEach(character.relationships, function(relationship){
-            r.icon = self.createIcon(relationship.type);
+            relationship.icon = self.createIcon(relationship.type);
           });
           return this.editing;
         },
@@ -136,10 +126,5 @@ angular.module('potgApp')
           }
         },
       };
-      // Public API here
-      // return {
-      //   someMethod: function () {
-      //     return meaningOfLife;
-      //   }
-      // };
+
     }]);

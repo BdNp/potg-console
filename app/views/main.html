@@ -1,6 +1,6 @@
 <!-- Master Character List -->
 <div class="col-sm-3" id="characterList" ng-controller="CharacterlistCtrl">
-	<input type="text" ng-model="charName" />
+	<input type="text" ng-model="charName" placeholder="search" />
 	<ul id="characterList" class="list-unstyled">
 		<li ng-repeat="char in characters | filter: charName">
 		<!-- <li ng-repeat="char in characters"> -->
@@ -26,10 +26,13 @@
 
 <div class="col-sm-6" id="editCharacter" ng-controller="CharacterCtrl">
 	<!-- <form id="editCharacter" ng-if="editing.length > 0"> -->
-		<h2>Character Info</h2>
-		<input type="text" id="name" class="form-control" ng-model="editing.name" />
-		<input type="text" id="characteristics" class="form-control" ng-model="editing.characteristics" />
-		<input type="text" id="voice" class="form-control" ng-model="editing.voice" />
+		<h2>
+			Character Info
+			<small><button class="btn btn-link" ng-click="newChar()"><span class="fa fa-plus"></span> New Character</button></small>
+		</h2>
+		<input type="text" id="name" placeholder="name" class="form-control" ng-model="editing.name" />
+		<input type="text" id="characteristics" placeholder="characteristics" class="form-control" ng-model="editing.characteristics" />
+		<input type="text" id="voice" placeholder="voice" class="form-control" ng-model="editing.voice" />
 		<select name="actor" id="actor" ng-model="editing.actor" class="form-control">
 			<option value="Brad">Brad</option>
 			<option value="Derek">Derek</option>
@@ -40,7 +43,7 @@
 		<h3>Relationships</h3>
 		<ul id="relationships" class="list-unstyled">
 			<div class="row">
-				{{relationshipStatus}}
+				
 				<select class="form-control" name="new-relationship" id="new-relationship" ng-model="relationshipStatus">
              		<option value="">Select a dynamic</option>
 					<option value="Friends">Friends</option>
@@ -93,7 +96,12 @@
 				<button class="btn btn-link text-danger" ng-click="removeFromList('history', item)"><span class="fa fa-times"></span></button>
 			</li>
 		</ul>
-
+		
+		<div class="row">
+			<div class="col-xs-6 col-sm-4">
+				<button class="btn btn-default" ng-click="save(editing)">Save</button>
+			</div>
+		</div>
 
 	<!-- </form> -->
 </div>

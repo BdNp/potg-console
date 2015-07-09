@@ -10,7 +10,7 @@
 angular.module('potgApp')
   .controller('CallersCtrl', function ($scope, characters) {
 	
-	$scope.characters = characters.db;
+	// $scope.characters = characters.db;
 	$scope.callers = characters.onAir;
 
 	$scope.hangUp = function(character) {
