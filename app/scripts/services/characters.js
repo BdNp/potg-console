@@ -36,7 +36,7 @@ angular.module('potgApp')
       var dummyCharacters = [
         {
           id: '0',
-          name: 'Birdman',
+          name: 'Yoton O’Sunlove',
           actor: 'Jared',
           characteristics: [],
           voice: [],
@@ -60,10 +60,10 @@ angular.module('potgApp')
           id: '2',
           name: 'Gonzo',
           actor: 'Brad',
-          characteristics: ['promiscuous', 'agitated'],
-          voice: ['gravelly', 'new york'],
-          relationships: [{type: 'Lovers', character: "Everyone"}, {type: 'Enemies', character: 'Al Gore'}],
-          history: ['likes to rhyme at the end of sentences'],
+          characteristics: 'promiscuous,agitated',
+          voice: 'gravelly,new york',
+          relationships: [{ID: 0, relationshipStatus: 'Lovers', character: 'Everyone'}, {ID: 1, relationshipStatus: 'Enemies', character: 'Al Gore'}],
+          history: ['like\'s to rhyme at the end of sentences'],
           episodes: [704,706,802,805,808],
           live: false
         },
@@ -87,11 +87,16 @@ angular.module('potgApp')
           // Get Character from the API
           this.api.getCharacter(character.id)
               .success(function(char){
+                console.log('successfully loaded')
                 console.log(char);
+                // &title=Gonzo&custom[actor]=Brad&custom[characteristics]=promiscuous,agitated&custom[voice]=gravelly,new-york&custom[relationships]=[ID_0,status_lovers,character_everyone],[ID_1,status_enemies,character_al-gore]&custom[history]=like-s-to-rhyme-at-the-end-of-sentences&custom[episodes]=704,706,802,805,808
+                // self.editing.title = char.
               })
               .error(function(){
                 console.log('go home');
               });
+
+          //values 
 
           this.editing = character;
           angular.forEach(character.relationships, function(relationship){

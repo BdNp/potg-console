@@ -24,7 +24,7 @@ angular.module('potgApp')
           console.log(characters.db);
         });
     }
-    // getCharacters();
+    getCharacters();
 
     $scope.characters = characters.db;
                       
