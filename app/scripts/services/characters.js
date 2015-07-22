@@ -22,14 +22,16 @@ angular.module('potgApp')
         getCharacter: function(id) {
           return $http.get(urlBase + 'api/get_post/?id=' + id);
         },
-        updateCharacter: function(params) {
-          return $http.get(urlBase + '?json=posts.update_post&nonce=' + this.getNonce('update_post') + params + '&status=publish' );
+        // updateCharacter: function(id, params) {
+        updateCharacter: function(nonce, params) {
+          // return $http.post((urlBase + 'api/?json=update_post&id=' + id), params );
+          return $http.get(urlBase + '?json=posts.update_post&nonce=' + nonce + params + '&status=publish' );
         },
-        addCharacter: function(params) {
-          return $http.get(urlBase + '?json=posts.create_post&nonce=' + this.getNonce('create_post') + params + '&status=publish' );
+        addCharacter: function(params, nonce) {
+          return $http.get(urlBase + '?json=posts.create_post&nonce=' + nonce + params + '&status=publish' );
         },
         getNonce: function(method) {
-          return $http.get(urlBase + '?json=core.get_nonce&controller=posts&method=' + method + '&callback=?');
+          return $http.get(urlBase + '?json=core.get_nonce&controller=posts&method=' + method);
         }
       };
   

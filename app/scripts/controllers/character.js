@@ -112,23 +112,39 @@ angular.module('potgApp')
     $scope.save = function(character) {
       // Convert character details to url params
       var params = '';
+      // var params = {
+      //   title: character.name,
+      //   custom_fields: {},
+      // };
 
-      console.log(character);
+      // console.log(character);
       if (character.name != undefined)
         params += '&title=' + $scope.serialize(character.name);
       if (character.actor != undefined)
-        params += '&custom[actor]=' + character.actor;
+        // params.custom_fields.actor = character.actor;
+      // else params.custom_fields.actor = 'Brad';
+        params += '&custom_field[actor]=' + character.actor;
       else params += '&custom[actor]=Brad';
       if (character.characteristics != undefined)
-        params += '&custom[characteristics]=' + $scope.serialize(character.characteristics);
+      //   params.custom_fields.characteristics = character.characteristics;
+        params += '&custom_field[characteristics]=' + $scope.serialize(character.characteristics);
       if (character.voice != undefined)
-        params += '&custom[voice]=' + $scope.serialize(character.voice);
+        // params.custom_fields.voice = character.voice;
+        params += '&custom_field[voice]=' + $scope.serialize(character.voice);
       if (character.relationships != undefined)
-        params += '&custom[relationships]=' + $scope.serialize(character.relationships);
+        // params.custom_fields.relationships = character.relationships;
+        params += '&custom_field[relationships]=' + $scope.serialize(character.relationships);
       if (character.history != undefined)
-        params += '&custom[history]=' + $scope.serialize(character.history);
+        // params.custom_fields.history = character.history;
+        params += '&custom_field[history]=' + $scope.serialize(character.history);
       if (character.episodes != undefined)
-        params += '&custom[episodes]=' + $scope.serialize(character.episodes);
+        // params.custom_fields.episodes = character.episodes;
+        params += '&custom_field[episodes]=' + $scope.serialize(character.episodes);
+
+      params += '&custom_field[episodes]=test&custom_fields[no]=yes';
+
+
+
       console.log(params);
 
       // New or Update
@@ -153,17 +169,25 @@ angular.module('potgApp')
         // $scope.newChar = false;
       } else {
         params += '&id=' + character.id;
+        // params.id = character.id;
         console.log('save');
+        console.log(params);
 
         // console.log($scope.character);
         // API update
-        $scope.character.api.updateCharacter(params)
-          .success(function(data) {
-            console.log('Post successful');
-            console.log(data);
-          })
-          .error(function(err) {
-            console.log(err);
+        $scope.character.api.getNonce('update_post')
+          .success(function (data) {
+            // console.log(data);
+            // params.nonce = data.nonce;
+            $scope.character.api.updateCharacter(data.nonce, params)
+            // $scope.character.api.updateCharacter(params.id, params)
+              .success(function(feedback) {
+                console.log('Post successful');
+                console.log(feedback.post.custom_fields);
+              })
+              .error(function(err) {
+                console.log(err);
+              });
           });
       }
     }
