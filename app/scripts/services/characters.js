@@ -107,12 +107,18 @@ angular.module('potgApp')
                 self.editing.actor = thisCharacter.custom_fields.actor || '';
                 console.log(thisCharacter.custom_fields.relationships);
                 if ( thisCharacter.custom_fields.relationships != undefined) {
-                    self.editing.relationships = thisCharacter.custom_fields.relationships.toString();
-                    self.editing.relationships = self.editing.relationships.split(',');
-                    console.log(thisCharacter.custom_fields.relationships);
-                    // angular.forEach(self.editing.relationships, function(relationship) {
-
-                    // });
+                    self.editing.relationships = thisCharacter.custom_fields.relationships[0].toString();
+                    self.editing.relationships = self.editing.relationships.split('],[');
+                    console.log('begin split');
+                    console.log(self.editing.relationships);
+                    console.log('end split');
+                    angular.forEach(self.editing.relationships, function(relationship) {
+                      var output = {};
+                      var propertyValve = relationship.toString().split(',');
+                      angular.forEach(propertyValve, function(p) {
+                        
+                      });
+                    });
                 } else self.editing.relationships = [];
                 self.editing.history = thisCharacter.custom_fields.history || [];
                 self.editing.episodes = thisCharacter.custom_fields.episodes || [];
