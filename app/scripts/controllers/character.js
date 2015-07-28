@@ -10,30 +10,37 @@
 angular.module('potgApp')
   .controller('CharacterCtrl', function ($scope, characters) {
 
+    function getEpisodes() {
+      characters.api.getEpisodes()
+        .success(function(data){
+          characters.eps = data.posts;
+          $scope.episodes = characters.eps;
+        });
+    }
+
+    getEpisodes();
     $scope.character = characters;
-    $scope.episodes = characters.eps;
+    $scope.characters = characters.db;
     $scope.newChar = false;
     $scope.icon = function(a) {
       return characters.createIcon(a);
     }
     
-    $scope.$watch(function() {return characters.editing}, function(data){
-      console.log('watch');
-      console.log(characters.db);
+    // Lazy-load
+    $scope.$watch(function() {return characters.db}, function(data){
       $scope.characters = characters.db;
-      angular.forEach(data.relationship, function(r){
-        console.log(r);
-        if (r.icon == '') r.icon = $scope.createIcon(r.relationshipStatus);
-      });
+    });
+
+    $scope.$watch(function() {return characters.editing}, function(data){
       $scope.editing = data;
-    })
+      if (data.hasOwnProperty('relationships') ) {
+        angular.forEach(data.relationships, function(r){
+          if (r.icon == '') r.icon = $scope.createIcon(r.relationshipStatus);
+        });
+      }
+    });
 
-    $scope.multiSelectHanlder = function(target, selection) {
-      angular.forEach(data.character, function(character) {
-        $scope.editing[category].push({relationshipStatus: data.relationshipStatus, icon: data.icon, character: character});
-      });
-    }
-
+    // Add Story/Relationship/Appearances to their respective lists
     $scope.pushToCategory = function(category, data) {
       if($scope.editing[category].indexOf(data) == -1)
         $scope.editing[category].push(data);
@@ -60,13 +67,14 @@ angular.module('potgApp')
         $scope.pushToCategory(category, data);
       }
       $scope[data] = '';
-      console.log(typeof(data));
     }
 
+    // Remove Story/Relationship/Appearances from their respective lists
     $scope.removeFromList = function(category, data) {
       $scope.editing[category].splice($scope.editing[category].indexOf(data), 1);
     }
 
+    // Render Relationship Icon HTML
     $scope.toHTML = function(str) {
       return str;
     }
@@ -77,13 +85,10 @@ angular.module('potgApp')
     }
 
     $scope.sanitize = function(str) {
-      console.log('sanitize ' + str);
       return str.toString()
-                      .replace(/\s/g, '%20')
-                      .replace(/\//g, '%2F')
-                      .replace(/['‘’]/g, '%2019')
-      // console.log(output);
-      // return output;
+                .replace(/\s/g, '%20')
+                .replace(/\//g, '%2F')
+                .replace(/['‘’]/g, '%27');
     }
     // Serialize the form for WP-API safe writing
     $scope.serialize = function(values) {
@@ -112,84 +117,69 @@ angular.module('potgApp')
     $scope.save = function(character) {
       // Convert character details to url params
       var params = '';
-      // var params = {
-      //   title: character.name,
-      //   custom_fields: {},
-      // };
 
-      // console.log(character);
       if (character.name != undefined)
         params += '&title=' + $scope.serialize(character.name);
       if (character.actor != undefined)
-        // params.custom_fields.actor = character.actor;
-      // else params.custom_fields.actor = 'Brad';
-        params += '&custom_field[actor]=' + character.actor;
+        params += '&custom_fields[actor]=' + character.actor;
       else params += '&custom[actor]=Brad';
       if (character.characteristics != undefined)
-      //   params.custom_fields.characteristics = character.characteristics;
-        params += '&custom_field[characteristics]=' + $scope.serialize(character.characteristics);
+        params += '&custom_fields[characteristics]=' + $scope.serialize(character.characteristics);
       if (character.voice != undefined)
-        // params.custom_fields.voice = character.voice;
-        params += '&custom_field[voice]=' + $scope.serialize(character.voice);
+        params += '&custom_fields[voice]=' + $scope.serialize(character.voice);
       if (character.relationships != undefined)
-        // params.custom_fields.relationships = character.relationships;
-        params += '&custom_field[relationships]=' + $scope.serialize(character.relationships);
+        params += '&custom_fields[relationships]=' + $scope.serialize(character.relationships);
       if (character.history != undefined)
-        // params.custom_fields.history = character.history;
-        params += '&custom_field[history]=' + $scope.serialize(character.history);
+        params += '&custom_fields[history]=' + $scope.serialize(character.history);
       if (character.episodes != undefined)
-        // params.custom_fields.episodes = character.episodes;
-        params += '&custom_field[episodes]=' + $scope.serialize(character.episodes);
-
-      params += '&custom_field[episodes]=test&custom_fields[no]=yes';
-
-
-
-      console.log(params);
+        params += '&custom_fields[episodes]=' + $scope.serialize(character.episodes);
 
       // New or Update
-      if($scope.newChar === true) {
-        $scope.character.newChar = true;
 
-        // debug, not needed when posting to WP
-        $scope.editing.charID = $scope.characters.length; 
-        $scope.characters.push($scope.editing);
+      // Get nonce to create or update posts, then perform the call
+      $scope.character.api.getNonce('update_post')
+        .success(function (data) {
+            
+          if($scope.newChar === true) {
+            $scope.character.newChar = true;
 
-        // API new
-        // $scope.character.api.addCharacter(params)
-        //   .success(function(data) {
-        //     console.log('Post successful');
-        //     console.log(data);
-        //   })
-        //   .error(function(err) {
-        //     console.log(err);
-        //   });
+            // debug, not needed when posting to WP
+            $scope.editing.id = $scope.characters.length; 
+            $scope.characters.push($scope.editing);
 
-        // No longer a new character, reset new flag
-        // $scope.newChar = false;
-      } else {
-        params += '&id=' + character.id;
-        // params.id = character.id;
-        console.log('save');
-        console.log(params);
-
-        // console.log($scope.character);
-        // API update
-        $scope.character.api.getNonce('update_post')
-          .success(function (data) {
-            // console.log(data);
-            // params.nonce = data.nonce;
-            $scope.character.api.updateCharacter(data.nonce, params)
-            // $scope.character.api.updateCharacter(params.id, params)
-              .success(function(feedback) {
+            // API new
+            $scope.character.api.addCharacter(data.nonce, params)
+              .success(function(data) {
                 console.log('Post successful');
-                console.log(feedback.post.custom_fields);
+                console.log(data);
               })
               .error(function(err) {
                 console.log(err);
               });
-          });
-      }
+
+            // No longer a new character, reset new flag
+            $scope.newChar = false;
+          } else {
+            params += '&id=' + character.id;
+
+            // API update
+            $scope.character.api.updateCharacter(data.nonce, params)
+              .success(function(feedback) {
+                console.log('Post successful');
+                characters.api.getCharacters()
+                  .success(function(data){
+                    characters.db = data.posts;
+                    angular.forEach(characters.db, function(char){
+                      char.title = characters.escapeHTML(char.title);
+                    });
+                    $scope.characters = characters.db;
+                  });
+              })
+              .error(function(err) {
+                console.log(err);
+              });
+          }
+      });
     }
 
   });

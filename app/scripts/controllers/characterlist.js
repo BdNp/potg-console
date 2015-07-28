@@ -9,46 +9,39 @@
  */
 angular.module('potgApp')
   .controller('CharacterlistCtrl', function ($scope, characters) {
-
-    function getCharacters() {
-      characters.api.getCharacters()
-        .success(function(data){
-          var output = [];
-          characters.db = [];
-          angular.forEach(data.posts, function(character){
-            output.push({name: character.title, id: character.id});
-            characters.db.push(character.id);
-          });
-          $scope.characters = output;
-          console.log($scope.characters);
-          console.log(characters.db);
+  
+    // API : Get Characters from DB
+    characters.api.getCharacters()
+      .success(function(data){
+        characters.db = data.posts;
+        angular.forEach(characters.db, function(char){
+          char.title = characters.escapeHTML(char.title);
         });
-    }
-    getCharacters();
-
-    $scope.characters = characters.db;
-                      
-  	$scope.callers = characters.onAir;
-  	$scope.editing = characters;
+        $scope.characters = characters.db;
+      });
+    
+    $scope.callers = characters.onAir;
     $scope.newChar = characters.newChar;
+
+    // If a character is created or updated, refresh the list.
+    $scope.$watch(function() { return characters.db }, function(data) {
+      $scope.characters = characters.db;
+    })
 
     // Clicking the phone icon next to their name makes the character "live"
     $scope.goLive = function(character) {
+  	  character.standby = true;
       if( $scope.callers.indexOf(character) == -1)
-		  $scope.callers.push(character);
-	  character.live = true;
+        $scope.callers.push(character);
     }
 
     // Character edit
     $scope.edit = function(character) {
-      $scope.editing.edit(character);
+      characters.edit(character);
     }
 
     $scope.$watch('newChar', function(){
-      console.log($scope.newChar);
-      // $scope.characters.push($scope.editing);
       $scope.newChar = false;
     })
-
 
   });

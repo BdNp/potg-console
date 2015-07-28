@@ -16,15 +16,16 @@ angular.module('potgApp')
         login: function(user, pass) {
 
         },
-        getCharacters: function() {
-          return $http.get(urlBase + 'api/get_category_posts/?id=21')
+        getEpisodes: function() {
+          return $http.get(urlBase + 'api/get_category_posts/?id=110$count=-1')
         },
+        getCharacters: function() {
+          return $http.get(urlBase + 'api/get_category_posts/?id=21&count=-1');
+       },
         getCharacter: function(id) {
           return $http.get(urlBase + 'api/get_post/?id=' + id);
         },
-        // updateCharacter: function(id, params) {
         updateCharacter: function(nonce, params) {
-          // return $http.post((urlBase + 'api/?json=update_post&id=' + id), params );
           return $http.get(urlBase + '?json=posts.update_post&nonce=' + nonce + params + '&status=publish' );
         },
         addCharacter: function(params, nonce) {
@@ -73,26 +74,55 @@ angular.module('potgApp')
       ];
   
       var dummyEpisodes = [704,706,802,805,808];
-  
+
       return {
+        self: this,
         api: api,
         db: dummyCharacters,
-        IDs: [1,2,3],
-        eps: dummyEpisodes,
         onAir: [],
-        editing: dummyCharacters[2],
+        editing: {},
         newChar: false,
-  
+
+        escapeHTML: function(str) {
+          console.log('escape');
+          return str
+                    .replace('&#8217;', "'")
+        },
+        
         edit: function(character) {
           self = this;
+          console.log('edit');
+          console.log(self.editing);
           
           // Get Character from the API
           this.api.getCharacter(character.id)
-              .success(function(char){
-                console.log('successfully loaded')
-                console.log(char);
-                // &title=Gonzo&custom[actor]=Brad&custom[characteristics]=promiscuous,agitated&custom[voice]=gravelly,new-york&custom[relationships]=[ID_0,status_lovers,character_everyone],[ID_1,status_enemies,character_al-gore]&custom[history]=like-s-to-rhyme-at-the-end-of-sentences&custom[episodes]=704,706,802,805,808
-                // self.editing.title = char.
+              .success(function(thisCharacter){
+                thisCharacter = thisCharacter.post;
+                console.log('thisCharacter');
+                console.log(thisCharacter);
+                self.editing.name = self.escapeHTML(thisCharacter.title);
+                self.editing.id = thisCharacter.id;
+                self.editing.characteristics = thisCharacter.custom_fields.characteristics || '';
+                self.editing.voice = thisCharacter.custom_fields.voice || '';
+                self.editing.actor = thisCharacter.custom_fields.actor || '';
+                console.log(thisCharacter.custom_fields.relationships);
+                if ( thisCharacter.custom_fields.relationships != undefined) {
+                    self.editing.relationships = thisCharacter.custom_fields.relationships.toString();
+                    self.editing.relationships = self.editing.relationships.split(',');
+                    console.log(thisCharacter.custom_fields.relationships);
+                    // angular.forEach(self.editing.relationships, function(relationship) {
+
+                    // });
+                } else self.editing.relationships = [];
+                self.editing.history = thisCharacter.custom_fields.history || [];
+                self.editing.episodes = thisCharacter.custom_fields.episodes || [];
+                
+                // self.editing = thisCharacter;
+                // angular.forEach(thisCharacter.relationships, function(relationship){
+                //   relationship.icon = self.createIcon(relationship.type);
+                // });
+                console.log(self.editing);
+                return self.editing;
               })
               .error(function(){
                 console.log('go home');
@@ -100,11 +130,6 @@ angular.module('potgApp')
 
           //values 
 
-          this.editing = character;
-          angular.forEach(character.relationships, function(relationship){
-            relationship.icon = self.createIcon(relationship.type);
-          });
-          return this.editing;
         },
   
         createIcon: function(value) {

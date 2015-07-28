@@ -8,5 +8,6 @@
  * Controller of the potgApp
  */
 angular.module('potgApp')
-  .controller('MainCtrl', function ($scope) {
+  .controller('MainCtrl', function ($scope, characters) {
+
   });
