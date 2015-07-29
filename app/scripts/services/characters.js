@@ -107,18 +107,28 @@ angular.module('potgApp')
                 self.editing.actor = thisCharacter.custom_fields.actor || '';
                 console.log(thisCharacter.custom_fields.relationships);
                 if ( thisCharacter.custom_fields.relationships != undefined) {
-                    self.editing.relationships = thisCharacter.custom_fields.relationships[0].toString();
-                    self.editing.relationships = self.editing.relationships.split('],[');
-                    console.log('begin split');
-                    console.log(self.editing.relationships);
-                    console.log('end split');
-                    angular.forEach(self.editing.relationships, function(relationship) {
-                      var output = {};
-                      var propertyValve = relationship.toString().split(',');
-                      angular.forEach(propertyValve, function(p) {
-                        
+                    self.editing.relationships = [];
+                    var relationships = thisCharacter.custom_fields.relationships[0].toString();
+                    relationships = relationships.split('],[');
+                    angular.forEach(relationships, function(relationship) {
+                      var output = [];
+                      var rawRelationship = relationship.toString().split(',');
+                      angular.forEach(rawRelationship, function(rel) {
+                        var relationshipArray = rel.replace("[", '').replace("]", "").split(',');
+                        angular.forEach(relationshipArray, function(r) {
+                            r = r.split('_');
+                            if(r[1].substring(r[1].length - 1) == ' ')
+                              r[1] = r[1].substring(0, r[1].length - 1);
+                            output.push(r[1]);
+                          });
+                      });
+                      self.editing.relationships.push({
+                        ID: output[0],
+                        status: output[1],
+                        character: output[2]
                       });
                     });
+                  console.log(self.editing.relationships);
                 } else self.editing.relationships = [];
                 self.editing.history = thisCharacter.custom_fields.history || [];
                 self.editing.episodes = thisCharacter.custom_fields.episodes || [];
@@ -127,7 +137,7 @@ angular.module('potgApp')
                 // angular.forEach(thisCharacter.relationships, function(relationship){
                 //   relationship.icon = self.createIcon(relationship.type);
                 // });
-                console.log(self.editing);
+                // console.log(self.editing);
                 return self.editing;
               })
               .error(function(){
