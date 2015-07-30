@@ -7,9 +7,33 @@ $info:		#16B9E8;
 $warning:	#FFCE19;
 $danger:	#FF0E0D;
 
+$gray:		#F1F1F1;
+
 $jared:		$primary;
 $derek:		$secondary;
 $brad: 		$success;
+
+body {
+	background-color: $gray;
+}
+
+h1,h2,h3,h4,h5 {
+	small {
+		color: $secondary;
+	}
+}
+
+a,
+.btn-link 
+{ color: $primary }
+
+.header,
+.footer, 
+.bg-alt {
+	background-color: white;
+}
+
+
 
 .brad {
 	color: $brad;

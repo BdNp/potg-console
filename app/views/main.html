@@ -1,4 +1,4 @@
-<!-- Master Character List -->
+<!-- MASTER CHARACTER LIST -->
 <div class="col-sm-3" id="characterList" ng-controller="CharacterlistCtrl">
 	<input type="text" ng-model="charName" placeholder="search" />
 	<span ng-show="loading"><span class="fa fa-circle-o-notch fa-spin"></span> Loading...</span>
@@ -13,19 +13,8 @@
 	</ul>
 </div>
 
-<div class="col-sm-3" id="callerList" ng-controller="CallersCtrl">
-	<ul id="callerList" class="list-unstyled">
-		<li ng-repeat="char in callers">
-		<!-- <li ng-repeat="char in characters"> -->
-			<div class="btn-group" role="group">
-				<button class="btn" ng-click="onAir(char)" ng-class="char.live ? 'btn-success' : 'btn-default'">{{char.title}}</button>
-				<button class="btn btn-default" ng-click="hangUp(char)"><span class="fa fa-times"></span></button>
-			</div>
-		</li>
-	</ul>
-</div>
-
-<div class="col-sm-6" id="editCharacter" ng-controller="CharacterCtrl">
+<!-- EDIT CHARACTER -->
+<div class="col-sm-6 bg-alt" id="editCharacter" ng-controller="CharacterCtrl">
 	<!-- <form id="editCharacter" ng-if="editing.length > 0"> -->
 		<h2>
 			Character Info
@@ -109,4 +98,17 @@
 		</div>
 
 	<!-- </form> -->
+</div>
+
+<!-- CALLER LIST -->
+<div class="col-sm-3" id="callerList" ng-controller="CallersCtrl">
+	<ul id="callerList" class="list-unstyled">
+		<li ng-repeat="char in callers">
+		<!-- <li ng-repeat="char in characters"> -->
+			<div class="btn-group" role="group">
+				<button class="btn" ng-click="onAir(char)" ng-class="char.live ? 'btn-success' : 'btn-default'">{{char.title}}</button>
+				<button class="btn btn-default" ng-click="hangUp(char)"><span class="fa fa-times"></span></button>
+			</div>
+		</li>
+	</ul>
 </div>
