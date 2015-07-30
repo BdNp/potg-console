@@ -39,7 +39,7 @@ angular.module('potgApp')
       var dummyCharacters = [
         {
           id: '0',
-          name: 'Yoton O’Sunlove',
+          title: 'Yoton O’Sunlove',
           actor: 'Jared',
           characteristics: [],
           voice: [],
@@ -50,7 +50,7 @@ angular.module('potgApp')
         },
         {
           id: '1',
-          name: 'Bill Clinton',
+          title: 'Bill Clinton',
           actor: 'Derek',
           characteristics: [],
           voice: [],
@@ -61,7 +61,7 @@ angular.module('potgApp')
         },
         {
           id: '2',
-          name: 'Gonzo',
+          title: 'Gonzo',
           actor: 'Brad',
           characteristics: 'promiscuous,agitated',
           voice: 'gravelly,new york',
@@ -91,12 +91,14 @@ angular.module('potgApp')
         
         edit: function(character) {
           self = this;
+          self.editing = 0;
           console.log('edit');
           console.log(self.editing);
           
           // Get Character from the API
           this.api.getCharacter(character.id)
               .success(function(thisCharacter){
+                self.editing = {};
                 thisCharacter = thisCharacter.post;
                 console.log('thisCharacter');
                 console.log(thisCharacter);
@@ -106,29 +108,38 @@ angular.module('potgApp')
                 self.editing.voice = thisCharacter.custom_fields.voice || '';
                 self.editing.actor = thisCharacter.custom_fields.actor || '';
                 console.log(thisCharacter.custom_fields.relationships);
+
+                // Relationship parser
+                // Relationships are SAVED as a stringified array because of the $GET URI constraints
+                // So it needs to be run through a series of string splits to break out the keys/values
                 if ( thisCharacter.custom_fields.relationships != undefined) {
                     self.editing.relationships = [];
-                    var relationships = thisCharacter.custom_fields.relationships[0].toString();
-                    relationships = relationships.split('],[');
+                    var relationships = thisCharacter.custom_fields.relationships[0].toString().split('],[');
+
                     angular.forEach(relationships, function(relationship) {
                       var output = [];
                       var rawRelationship = relationship.toString().split(',');
+
                       angular.forEach(rawRelationship, function(rel) {
                         var relationshipArray = rel.replace("[", '').replace("]", "").split(',');
+
                         angular.forEach(relationshipArray, function(r) {
-                            r = r.split('_');
-                            if(r[1].substring(r[1].length - 1) == ' ')
-                              r[1] = r[1].substring(0, r[1].length - 1);
-                            output.push(r[1]);
-                          });
+                          r = r.split('_');
+                          if(r[1].substring(r[1].length - 1) == ' ')
+                            r[1] = r[1].substring(0, r[1].length - 1);
+                          output.push(r[1]);
+                        });
+
                       });
+
                       self.editing.relationships.push({
                         ID: output[0],
                         status: output[1],
                         character: output[2]
                       });
+
                     });
-                  console.log(self.editing.relationships);
+                  // console.log(self.editing.relationships);
                 } else self.editing.relationships = [];
                 self.editing.history = thisCharacter.custom_fields.history || [];
                 self.editing.episodes = thisCharacter.custom_fields.episodes || [];

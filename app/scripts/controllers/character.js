@@ -22,21 +22,29 @@ angular.module('potgApp')
     $scope.character = characters;
     $scope.characters = characters.db;
     $scope.newChar = false;
+    $scope.editing = {name: ''};
+    $scope.cta = 'Update'
     $scope.icon = function(a) {
       return characters.createIcon(a);
-    }
+    };
     
     // Lazy-load
-    $scope.$watch(function() {return characters.db}, function(data){
+    $scope.$watch(function() {return characters.db}, function(){
       $scope.characters = characters.db;
     });
 
     $scope.$watch(function() {return characters.editing}, function(data){
-      $scope.editing = data;
-      if (data.hasOwnProperty('relationships') ) {
-        angular.forEach(data.relationships, function(r){
-          if (r.icon == '') r.icon = $scope.createIcon(r.relationshipStatus);
-        });
+      if (characters.editing == 0) {
+        $scope.loading = true;
+      } else {
+        $scope.loading = (characters.editing == 0);
+        $scope.editing = data;
+        if (data.hasOwnProperty('relationships') ) {
+          angular.forEach(data.relationships, function(r){
+            if (r.icon == '') r.icon = $scope.createIcon(r.relationshipStatus);
+          });
+        }
+        $scope.loading = false;
       }
     });
 
@@ -45,7 +53,7 @@ angular.module('potgApp')
       if($scope.editing[category].indexOf(data) == -1)
         $scope.editing[category].push(data);
       console.log($scope.editing[category]);
-    }
+    };
 
     $scope.addTo = function(category, data) {
       if ($scope.editing[category] == undefined)
@@ -82,6 +90,7 @@ angular.module('potgApp')
     $scope.newChar = function() {
       $scope.editing = {};
       $scope.newChar = true;
+      $scope.cta = "Add";
     }
 
     $scope.sanitize = function(str) {
@@ -117,6 +126,8 @@ angular.module('potgApp')
     $scope.save = function(character) {
       // Convert character details to url params
       var params = '';
+      $scope.saving = true;
+      $scope.cta = 'Saving';
 
       if (character.name != undefined)
         params += '&title=' + $scope.serialize(character.name);
@@ -144,16 +155,29 @@ angular.module('potgApp')
             $scope.character.newChar = true;
 
             // debug, not needed when posting to WP
-            $scope.editing.id = $scope.characters.length; 
-            $scope.characters.push($scope.editing);
+            // $scope.editing.id = $scope.characters.length; 
 
             // API new
             $scope.character.api.addCharacter(data.nonce, params)
               .success(function(data) {
                 console.log('Post successful');
                 console.log(data);
+                // $scope.characters.push($scope.editing);
+                $scope.saving = false;
+                $scope.cta = 'Update';
+                $scope.refreshing = true;
+                characters.api.getCharacters()
+                  .success(function(data){
+                    characters.db = data.posts;
+                    angular.forEach(characters.db, function(char){
+                      char.title = characters.escapeHTML(char.title);
+                    });
+                    $scope.characters = characters.db;
+                    $scope.refreshing = false;
+                  });
               })
               .error(function(err) {
+                console.log('Post Failed');
                 console.log(err);
               });
 
@@ -164,8 +188,11 @@ angular.module('potgApp')
 
             // API update
             $scope.character.api.updateCharacter(data.nonce, params)
-              .success(function(feedback) {
+              .success(function() {
                 console.log('Post successful');
+                $scope.saving = false;
+                $scope.cta = 'Update';
+                $scope.refreshing = true;
                 characters.api.getCharacters()
                   .success(function(data){
                     characters.db = data.posts;
@@ -173,9 +200,11 @@ angular.module('potgApp')
                       char.title = characters.escapeHTML(char.title);
                     });
                     $scope.characters = characters.db;
+                    $scope.refreshing = false;
                   });
               })
               .error(function(err) {
+                console.log('Post Failed');
                 console.log(err);
               });
           }

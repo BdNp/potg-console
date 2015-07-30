@@ -10,6 +10,7 @@
 angular.module('potgApp')
   .controller('CharacterlistCtrl', function ($scope, characters) {
   
+    $scope.loading = true;
     // API : Get Characters from DB
     characters.api.getCharacters()
       .success(function(data){
@@ -18,8 +19,10 @@ angular.module('potgApp')
           char.title = characters.escapeHTML(char.title);
         });
         $scope.characters = characters.db;
+        console.log($scope.characters);
+        $scope.loading = false;
       });
-    
+    // $scope.characters = characters.db;
     $scope.callers = characters.onAir;
     $scope.newChar = characters.newChar;
 
