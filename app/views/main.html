@@ -1,8 +1,9 @@
 <!-- Master Character List -->
 <div class="col-sm-3" id="characterList" ng-controller="CharacterlistCtrl">
 	<input type="text" ng-model="charName" placeholder="search" />
+	<span ng-show="loading"><span class="fa fa-circle-o-notch fa-spin"></span> Loading...</span>
 	<ul id="characterList" class="list-unstyled">
-		<li ng-repeat="char in characters | filter: charName">
+		<li ng-repeat="char in characters | filter: charName | orderBy:'title'">
 		<!-- <li ng-repeat="char in characters"> -->
 			<div class="btn-group" role="group">
 				<button class="btn btn-default" ng-click="edit(char)">{{char.title}}</button>
@@ -28,7 +29,10 @@
 	<!-- <form id="editCharacter" ng-if="editing.length > 0"> -->
 		<h2>
 			Character Info
-			<small><button class="btn btn-link" ng-click="newChar()"><span class="fa fa-plus"></span> New Character</button></small>
+			<small>
+				<button class="btn btn-link" ng-click="newChar()"><span class="fa fa-plus"></span> New Character</button>
+				<span ng-show="loading"><span class="fa fa-circle-o-notch fa-spin"></span> Loading Character...</span>
+			</small>
 		</h2>
 		<input type="text" id="name" placeholder="name" class="form-control" ng-model="editing.name" />
 		<input type="text" id="characteristics" placeholder="characteristics" class="form-control" ng-model="editing.characteristics" />
@@ -99,7 +103,8 @@
 		
 		<div class="row">
 			<div class="col-xs-6 col-sm-4">
-				<button class="btn btn-default" ng-click="save(editing)">Save</button>
+				<button class="btn btn-default" ng-click="save(editing)"><span class="fa fa-circle-o-notch fa-spin" ng-show="saving"></span> {{cta}} {{ editing.name || '' }}</button>
+				<span ng-show="refreshing"><span class="fa fa-circle-o-notch fa-spin"></span> Refreshing List...</span>			
 			</div>
 		</div>
 
