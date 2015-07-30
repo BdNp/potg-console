@@ -1,0 +1,36 @@
+// POTG COLOR PALETTE
+$primary: 	#FF00FB;
+$secondary: #09B29A;
+
+$success:	#188FFF;
+$info:		#16B9E8;
+$warning:	#FFCE19;
+$danger:	#FF0E0D;
+
+$jared:		$primary;
+$derek:		$secondary;
+$brad: 		$success;
+
+.brad {
+	color: $brad;
+	.bg {
+		background-color: $brad;
+		color: white;
+	}
+}
+
+.jared {
+	color: $jared;
+	.bg {
+		background-color: $jared;
+		color: white;
+	}
+}
+
+.derek {
+	color: $derek;
+	.bg {
+		background-color: $derek;
+		color: white;
+	}
+}
