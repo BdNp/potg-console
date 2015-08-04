@@ -10,10 +10,12 @@
 angular.module('potgApp')
   .controller('CallersCtrl', function ($scope, characters) {
 	
-	$scope.callers = characters.onAir;
+	$scope.callers = characters.db;
 
 	$scope.onAir = function(character) {
+	  console.log(character.live);
 	  character.live = true;
+	  console.log(character.live);
 	  character.standby = false;
     };
 

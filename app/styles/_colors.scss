@@ -8,13 +8,16 @@ $warning:	#FFCE19;
 $danger:	#FF0E0D;
 
 $gray:		#F1F1F1;
+$black:		#333333;
 
 $jared:		$primary;
 $derek:		$secondary;
 $brad: 		$success;
 
+$bg-color:  $gray;
+
 body {
-	background-color: $gray;
+	background-color: $bg-color;
 }
 
 h1,h2,h3,h4,h5 {
@@ -33,28 +36,56 @@ a,
 	background-color: white;
 }
 
+@mixin host-color($color) {
+	> * { transition: 0.2s all; }
 
+	color: $color;
 
-.brad {
-	color: $brad;
-	.bg {
-		background-color: $brad;
-		color: white;
+	.circle-letter { color: $bg-color}
+
+	a {
+		color: $color;
+		&:hover {
+			color: $bg-color;
+			background-color: $color;
+			span { color: $bg-color }
+		}
+
+		&.character-live {
+			background-color: darken($color, 25%);
+			color: lighten($color, 20%);
+			text-shadow: 0 0 5px lighten($color, 20%);
+		}
+
+		&.character-hangup {
+			color: $danger;
+			&:hover {
+				background-color: $danger;
+				color: $bg-color;
+			}
+		}
 	}
+
+	.bubble:hover {
+		.circle-letter { color: $color}
+		color: $bg-color;
+		background-color: $color;
+	}
+
 }
 
-.jared {
-	color: $jared;
-	.bg {
-		background-color: $jared;
-		color: white;
-	}
+.Brad {
+	@include host-color($brad);
 }
 
-.derek {
-	color: $derek;
-	.bg {
-		background-color: $derek;
-		color: white;
-	}
+.Jared {
+	@include host-color($jared);
+}
+
+.Derek {
+	@include host-color($derek);
+}
+
+.character-waiting {
+	
 }

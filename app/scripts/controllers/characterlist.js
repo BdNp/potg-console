@@ -17,12 +17,16 @@ angular.module('potgApp')
         characters.db = data.posts;
         angular.forEach(characters.db, function(char){
           char.title = characters.escapeHTML(char.title);
+          char.actorInitial = char.actor.substring(0,1);
         });
         $scope.characters = characters.db;
         console.log($scope.characters);
         $scope.loading = false;
       });
     // $scope.characters = characters.db;
+    angular.forEach(characters.db, function(char){
+          char.actorInitial = char.actor.substring(0,1);
+        });
     $scope.callers = characters.onAir;
     $scope.newChar = characters.newChar;
 

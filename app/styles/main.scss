@@ -1,8 +1,40 @@
 $icon-font-path: "../bower_components/bootstrap-sass-official/assets/fonts/bootstrap/";
 // bower:scss
 @import "bootstrap-sass-official/assets/stylesheets/_bootstrap.scss";
-@import "colors";
 // endbower
+@import "colors";
+
+// POTG
+// Character DB List
+
+.character {
+
+  [class*='col'] {
+    padding:      0.5em;
+    line-height:    2em;
+    font-size:   1.25em;
+    height: 3em;
+  }
+
+  .character-call, .character-hangup {
+    border-left: 1px solid #e0e0e0; 
+  }
+
+  &:hover a { 
+    text-decoration: none; 
+    cursor: pointer;
+  }
+
+}
+
+
+// Global 
+
+a {
+  text-decoration: none;
+}
+
+
 
 .browsehappy {
   margin: 0.2em 0;
@@ -22,6 +54,7 @@ body {
   padding-left: 15px;
   padding-right: 15px;
 }
+
 
 /* Custom page header */
 .header {
