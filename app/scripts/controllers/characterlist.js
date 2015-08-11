@@ -12,27 +12,48 @@ angular.module('potgApp')
   
     $scope.loading = true;
     // API : Get Characters from DB
+
+    function pruneCharacterApi(characterAPI) {
+      angular.forEach(characterAPI.db, function(char){
+        char.name = characterAPI.escapeHTML(char.title);
+        char.actor = char.custom_fields.actor || '';
+        char.actor = char.actor[0] || '';
+        char.actorInitial = (char.actor != undefined) ? char.actor.substring(0,1) : '';
+        char.count = char.name.length;
+        console.log(char.count);
+      });
+      $scope.characters = characters.db;
+      console.log($scope.characters);
+      $scope.loading = false;
+    }
     characters.api.getCharacters()
       .success(function(data){
         characters.db = data.posts;
-        angular.forEach(characters.db, function(char){
-          char.title = characters.escapeHTML(char.title);
-          char.actorInitial = char.actor.substring(0,1);
-        });
-        $scope.characters = characters.db;
-        console.log($scope.characters);
-        $scope.loading = false;
+        pruneCharacterApi(characters);
+        // angular.forEach(characters.db, function(char){
+        //   char.name = characters.escapeHTML(char.title);
+        //   char.actor = char.custom_fields.actor || '';
+        //   char.actor = char.actor[0] || '';
+        //   char.actorInitial = (char.actor != undefined) ? char.actor.substring(0,1) : '';
+        //   char.count = char.name.length;
+        //   console.log(char.count);
+        // });
+        // $scope.characters = characters.db;
+        // console.log($scope.characters);
+        // $scope.loading = false;
       });
     // $scope.characters = characters.db;
     angular.forEach(characters.db, function(char){
-          char.actorInitial = char.actor.substring(0,1);
+          char.actorInitial = (char.actor != undefined) ? char.actor.substring(0,1) : '';
         });
     $scope.callers = characters.onAir;
     $scope.newChar = characters.newChar;
 
     // If a character is created or updated, refresh the list.
     $scope.$watch(function() { return characters.db }, function(data) {
-      $scope.characters = characters.db;
+      console.log(characters.db);
+      // $scope.characters = characters.db;
+      pruneCharacterApi(characters);
     })
 
     // Clicking the phone icon next to their name makes the character "live"

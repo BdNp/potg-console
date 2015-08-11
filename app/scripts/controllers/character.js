@@ -96,6 +96,7 @@ angular.module('potgApp')
     $scope.sanitize = function(str) {
       return str.toString()
                 .replace(/\s/g, '%20')
+                .replace(/[-–—]/g, '%2D')
                 .replace(/\//g, '%2F')
                 .replace(/['‘’]/g, '%27');
     }

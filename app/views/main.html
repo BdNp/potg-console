@@ -10,7 +10,7 @@
 					<span class="fa fa-circle fa-stack-2x"></span>
 					<span class="fa fa-stack-1x circle-letter">{{char.actorInitial}}</span>
 				</div>
-				<a class="col-xs-8 text-left  character-link" ng-click="edit(char)">{{char.title}}</a>
+				<a class="col-xs-8 text-left  character-link" ng-click="edit(char)">{{char.name}}</a>
 				<a class="col-xs-2 text-center character-call" ng-click="goLive(char)"><span class="fa fa-phone text-success"></span></a>
 			</div>
 		</li>
@@ -127,7 +127,7 @@
 		<li ng-repeat="char in callers">
 		<!-- <li ng-repeat="char in characters"> -->
 			<div class="row character {{char.actor}}" role="group">
-				<a class="col-xs-10 text-left" ng-click="onAir(char)" ng-class="char.live ? 'chararacter-live' : 'character-waiting'">
+				<a class="col-xs-10 text-left" ng-click="onAir(char)" ng-class="getClass(char)">
 				<!-- <a class="col-xs-10 text-left chararacter-live" ng-click="onAir(char)"> -->
 					{{char.title}}</a>
 				<a class="col-xs-2 text-center character-hangup" ng-click="hangUp(char)"><span class="fa fa-times"></span></a>

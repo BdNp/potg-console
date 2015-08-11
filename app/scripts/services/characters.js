@@ -39,7 +39,7 @@ angular.module('potgApp')
       var dummyCharacters = [
         {
           id: '0',
-          title: 'Yoton O’Sunlove',
+          name: 'Yoton O’Sunlove',
           actor: 'Jared',
           characteristics: [],
           voice: [],
@@ -50,8 +50,8 @@ angular.module('potgApp')
         },
         {
           id: '1',
-          title: 'Bill Clinton',
-          actor: 'Derek',
+          name: 'Bill Clinton',
+
           characteristics: [],
           voice: [],
           relationships: [],
@@ -61,7 +61,7 @@ angular.module('potgApp')
         },
         {
           id: '2',
-          title: 'Gonzo',
+          name: 'Gonzo',
           actor: 'Brad',
           characteristics: 'promiscuous,agitated',
           voice: 'gravelly,new york',

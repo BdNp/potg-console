@@ -10,7 +10,7 @@
 angular.module('potgApp')
   .controller('CallersCtrl', function ($scope, characters) {
 	
-	$scope.callers = characters.db;
+	// $scope.callers = characters.db;
 
 	$scope.onAir = function(character) {
 	  console.log(character.live);
@@ -24,6 +24,14 @@ angular.module('potgApp')
 	  character.live = false;
 	  character.standby = false;
     };
+
+    $scope.getClass = function(character) {
+    	if ( character.live ) 
+    		return 'character-live';
+    	if ( character.live ) 
+    		return 'character-lsd';
+    	return 'character-waiting';
+    }
 
 
   });
