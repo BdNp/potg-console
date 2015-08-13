@@ -61,7 +61,7 @@ angular.module('potgApp')
         },
         {
           id: '2',
-          name: 'Gonzo',
+          name: 'Clyde the Clown a.k.a The Half-Exploded Clown',
           actor: 'Brad',
           characteristics: 'promiscuous,agitated',
           voice: 'gravelly,new york',

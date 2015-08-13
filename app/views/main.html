@@ -10,7 +10,7 @@
 					<span class="fa fa-circle fa-stack-2x"></span>
 					<span class="fa fa-stack-1x circle-letter">{{char.actorInitial}}</span>
 				</div>
-				<a class="col-xs-8 text-left  character-link" ng-click="edit(char)">{{char.name}}</a>
+				<a class="col-xs-8 text-left character-link  {{char.longName}}" ng-click="edit(char)">{{char.name}}</a>
 				<a class="col-xs-2 text-center character-call" ng-click="goLive(char)"><span class="fa fa-phone text-success"></span></a>
 			</div>
 		</li>

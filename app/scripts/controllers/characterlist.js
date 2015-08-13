@@ -19,7 +19,7 @@ angular.module('potgApp')
         char.actor = char.custom_fields.actor || '';
         char.actor = char.actor[0] || '';
         char.actorInitial = (char.actor != undefined) ? char.actor.substring(0,1) : '';
-        char.count = char.name.length;
+        char.longName = (char.name.length > 20) ? 'small' : '';
         console.log(char.count);
       });
       $scope.characters = characters.db;
@@ -42,9 +42,12 @@ angular.module('potgApp')
         // console.log($scope.characters);
         // $scope.loading = false;
       });
-    // $scope.characters = characters.db;
+    $scope.characters = characters.db;
     angular.forEach(characters.db, function(char){
           char.actorInitial = (char.actor != undefined) ? char.actor.substring(0,1) : '';
+          console.log( char.name.length );
+          char.longName = (char.name.length > 20) ? 'small' : 'no';
+          console.log('o');
         });
     $scope.callers = characters.onAir;
     $scope.newChar = characters.newChar;
